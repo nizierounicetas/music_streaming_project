@@ -15,7 +15,7 @@ docker run -itd \
     --nusers 1000000 \
     --growth-rate 10 \
     --userid 1 \
-    --kafkaBrokerList $BROKER_IP:9092 \
+    --kafkaBrokerList localhost:9092 \
     --randomseed 27 \
     --continuous
 
