@@ -1,6 +1,8 @@
 terraform/
 !terraform/main.tf
 
+!eventism/target/eventsim-assembly-2.0.jar
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
