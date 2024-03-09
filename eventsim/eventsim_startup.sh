@@ -1,4 +1,4 @@
-cd ~/musicaly-project/eventsim
+cd ~/music-streaming-project/eventsim
 
 echo "Building Eventsim Image..."
 docker build -t events:1.0 .
@@ -17,8 +17,8 @@ docker run -itd \
     --nusers 1000000 \
     --growth-rate 10 \
     --userid 1 \
-    --kafkaBrokerList localhost:9092 \
-    --randomseed 42 \
+    --kafkaBrokerList $BROKER_IP:9092 \
+    --randomseed 27 \
     --continuous
 
 echo "Started streaming events for 1 Million users..."
