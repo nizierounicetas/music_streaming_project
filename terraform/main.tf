@@ -82,7 +82,6 @@ resource "google_dataproc_cluster" "stage_streaming" {
 
     software_config {
       image_version = "2.1-debian11"
-      optional_components = ["JUPYTER"]
     }
   }
 }
