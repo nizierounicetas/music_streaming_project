@@ -13,7 +13,7 @@ provider "google" {
   zone    = "us-central1-c"
 }
 
-resource "google_compute_instance" "eventism_vm" {
+resource "google_compute_instance" "eventsim_vm" {
   name                      = "music-streaming-eventism-vm"
   machine_type              = "e2-standard-2"
   tags                      = ["eventsim", "kafka"]
@@ -33,8 +33,8 @@ resource "google_compute_instance" "eventism_vm" {
   }
 }
 
-resource "google_storage_bucket" "music_streaming_bucket" {
-  name          = "music_streaming_stage"
+resource "google_storage_bucket" "music_stage_bucket" {
+  name          = "music_stage_bucket"
   location      = "us-central1"
   force_destroy = true
 
