@@ -3,14 +3,14 @@ import datetime
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import lit
 
-import constants
+from .constants import *
 
 class CoreLoader:
     def __init__(self, spark: SparkSession):
         self._spark = spark
 
     def process(self, topic: str, loading_date: str):
-        df = self._spark.read.parquet(f"{constants.GCS_PATH}/{topic}/data/")
+        df = self._spark.read.parquet(f"{GCS_PATH}/{topic}/data/")
         day, month, year = [int(v) for v in loading_date.split('.')]
 
         df = df.filter(df["year"] == lit(year) & df["month"] == lit(month) & df["day"] == lit(day))
@@ -18,4 +18,4 @@ class CoreLoader:
         df.show()
         df.printSchema()
 
-        df.write.format("bigquery").option('table', f'{constants.CORE_DATASET}.{topic}').mode('append').save()
+        df.write.format("bigquery").option('table', f'{CORE_DATASET}.{topic}').mode('append').save()

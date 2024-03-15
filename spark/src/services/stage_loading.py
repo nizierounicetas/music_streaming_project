@@ -5,14 +5,13 @@ from pyspark.sql.functions import from_json, col, year, month, dayofmonth, hour
 from pyspark.sql.streaming import DataStreamWriter
 from pyspark.sql.types import StructType
 
-import constants
-import schemas
+from .constants import *
+from .schemas import *
 
 class StageLoader:
 
     def __init__(self, spark: SparkSession):
         self._spark = spark
-        self._logger = logging.getLogger(constants.APP_NAME)
 
     def _read_stream_from_kafka(self, boostrap_server: str, topic: str, offset: str = "earliest") -> DataFrame:
         """
@@ -82,17 +81,17 @@ class StageLoader:
         Public method for processing data streams for listen events, page view events, auth events:
         reading from Kafka and writing to Google Cloud Storage
         """
-        df_meta = [(constants.AUTH_EVENTS_TOPIC, schemas.auth_events_schema),
-                   (constants.PAGE_VIEW_EVENTS_TOPIC, schemas.page_view_events_schema),
-                   (constants.LISTEN_EVENTS_TOPIC, schemas.listen_events_schema)]
+        df_meta = [(AUTH_EVENTS_TOPIC, auth_events_schema),
+                   (PAGE_VIEW_EVENTS_TOPIC, page_view_events_schema),
+                   (LISTEN_EVENTS_TOPIC, listen_events_schema)]
 
-        dfs = [self._read_stream_from_kafka(f'{constants.KAFKA_HOST}:{constants.KAFKA_PORT}', topic, "earliest")
+        dfs = [self._read_stream_from_kafka(f'{KAFKA_HOST}:{KAFKA_PORT}', topic, "earliest")
                for topic, _ in df_meta]
 
         dfs = [self._parse_df(dfs[i], df_meta[i][1]) for i in range(len(dfs))]
 
-        df_writers = [self._get_stream_writer_to_parquet(dfs[i], f'{constants.GCS_PATH}/{df_meta[i][0]}/data/',
-                                                         f'{constants.GCS_PATH}/{df_meta[i][0]}/checkpoints/',
+        df_writers = [self._get_stream_writer_to_parquet(dfs[i], f'{GCS_PATH}/{df_meta[i][0]}/data/',
+                                                         f'{GCS_PATH}/{df_meta[i][0]}/checkpoints/',
                                                          "120 seconds", "append") for i in range(len(dfs))]
 
         for writer in df_writers:
