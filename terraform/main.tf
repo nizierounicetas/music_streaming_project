@@ -50,7 +50,7 @@ resource "google_storage_bucket" "music_stage_bucket" {
   }
 }
 
-resource "google_dataproc_cluster" "stage_streaming" {
+resource "google_dataproc_cluster" "music_dataproc_cluster" {
   name   = "stage-streaming"
   region = "us-central1"
   project = "music-streaming-project"
@@ -84,4 +84,18 @@ resource "google_dataproc_cluster" "stage_streaming" {
       image_version = "2.1-debian11"
     }
   }
+}
+
+resource "google_bigquery_dataset" "core_dataset" {
+  dataset_id                 = "music_core"
+  project                    = "music-streaming-project"
+  location                   = "us-central1"
+  delete_contents_on_destroy = true
+}
+
+resource "google_bigquery_dataset" "dm_dataset" {
+  dataset_id                 = "music_dm"
+  project                    = "music-streaming-project"
+  location                   = "us-central1"
+  delete_contents_on_destroy = true
 }

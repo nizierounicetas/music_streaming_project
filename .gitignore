@@ -1,4 +1,4 @@
-*/.idea
+*.idea
 
 terraform/
 !terraform/main.tf
