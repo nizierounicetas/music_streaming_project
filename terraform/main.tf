@@ -50,6 +50,21 @@ resource "google_storage_bucket" "music_stage_bucket" {
   }
 }
 
+resource "google_compute_firewall" "open_kafka" {
+  name    = "open-kafka"
+  network = "default"
+  project = "music-streaming-project"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["9092"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_service_accounts = ["music-service-account@music-streaming-project.iam.gserviceaccount.com"]
+
+}
+
 resource "google_dataproc_cluster" "music_dataproc_cluster" {
   name   = "stage-streaming"
   region = "us-central1"
