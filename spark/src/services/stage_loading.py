@@ -8,6 +8,7 @@ from pyspark.sql.types import StructType
 from .constants import *
 from .schemas import *
 
+
 class StageLoader:
 
     def __init__(self, spark: SparkSession):
@@ -22,12 +23,12 @@ class StageLoader:
         :returns: stream as Dataframe
         """
         df = self._spark.readStream \
-                   .format("kafka") \
-                   .option("kafka.bootstrap.servers", boostrap_server) \
-                   .option("failOnDataLoss", False) \
-                   .option("startingOffsets", offset) \
-                   .option("subscribe", topic) \
-                   .load()
+            .format("kafka") \
+            .option("kafka.bootstrap.servers", boostrap_server) \
+            .option("failOnDataLoss", False) \
+            .option("startingOffsets", offset) \
+            .option("subscribe", topic) \
+            .load()
 
         return df
 
@@ -47,11 +48,11 @@ class StageLoader:
 
         df = df \
             .withColumn("ts", (col("ts") / 1000).cast("timestamp")) \
-
+            
+            
         df = df.withColumn("year", year(col("ts"))) \
             .withColumn("month", month(col("ts"))) \
-            .withColumn("day", dayofmonth(col("ts"))) \
-            .withColumn("hour", hour(col("ts")))
+            .withColumn("day", dayofmonth(col("ts")))
 
         return df
 
@@ -68,7 +69,7 @@ class StageLoader:
         """
         stream_writer = df.writeStream \
             .format("parquet") \
-            .partitionBy("year", "month", "day", "hour") \
+            .partitionBy("year", "month", "day") \
             .option("path", storage_path) \
             .option("checkpointLocation", checkpoint_path) \
             .trigger(processingTime=trigger) \
@@ -98,14 +99,3 @@ class StageLoader:
             writer.start()
 
         self._spark.streams.awaitAnyTermination()
-
-
-
-
-
-
-
-
-
-
-

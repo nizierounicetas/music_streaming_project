@@ -1,4 +1,4 @@
-FROM marketplace.gcr.io/google/airflow2
+FROM apache/airflow:2.2.3
 
 USER root
 
