@@ -15,8 +15,28 @@ provider "google" {
 
 resource "google_compute_instance" "eventsim_vm" {
   name                      = "music-streaming-eventism-vm"
-  machine_type              = "e2-standard-2"
-  tags                      = ["eventsim", "kafka"]
+  machine_type              = "e2-standard-4"
+  tags                      = ["kafka"]
+  allow_stopping_for_update = true
+
+  boot_disk {
+    initialize_params {
+      image = "ubuntu-os-cloud/ubuntu-2004-lts"
+      size  = 15
+    }
+  }
+
+  network_interface {
+    network = "default"
+    access_config {
+    }
+  }
+}
+
+resource "google_compute_instance" "airflow_vm" {
+  name                      = "airflow-vm"
+  machine_type              = "e2-standard-4"
+  zone                      = "us-west1-b"
   allow_stopping_for_update = true
 
   boot_disk {
@@ -50,8 +70,8 @@ resource "google_storage_bucket" "music_stage_bucket" {
   }
 }
 
-resource "google_compute_firewall" "open_kafka" {
-  name    = "open-kafka"
+resource "google_compute_firewall" "kafka_firewall" {
+  name    = "kafka-"
   network = "default"
   project = "music-streaming-project"
 
@@ -61,9 +81,9 @@ resource "google_compute_firewall" "open_kafka" {
   }
 
   source_ranges = ["0.0.0.0/0"]
-  target_service_accounts = ["music-service-account@music-streaming-project.iam.gserviceaccount.com"]
-
+  target_tags   = ["kafka"]
 }
+
 
 resource "google_dataproc_cluster" "music_dataproc_cluster" {
   name   = "stage-streaming"
@@ -77,7 +97,7 @@ resource "google_dataproc_cluster" "music_dataproc_cluster" {
 
     master_config {
       num_instances = 1
-      machine_type  = "n2-standard-2"
+      machine_type  = "n2-standard-4"
 
       disk_config {
         boot_disk_type    = "pd-balanced"
@@ -87,7 +107,7 @@ resource "google_dataproc_cluster" "music_dataproc_cluster" {
 
     worker_config {
       num_instances = 2
-      machine_type  = "n2-standard-2"
+      machine_type  = "n2-standard-4"
 
       disk_config {
         boot_disk_type    = "pd-balanced"
